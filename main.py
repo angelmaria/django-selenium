@@ -13,11 +13,12 @@ def get_driver():
   options.add_argument("disable-blink-features=AutomationControlled")
 
   driver = webdriver.Chrome(options=options)
-  driver.get("https://automated.pythonanywhere.com/login/")
+  driver.get("https://quotes.toscrape.com/login/")
   return driver
 
 def clean_text(text):
   """ Extract only the temperature from text """
+  """ Extract goodreads page url from webpage """
   return float(text.split(":")[1].strip())
   
 
@@ -25,9 +26,9 @@ def main():
   driver = get_driver()
   
   # Find and fill in username and password
-  driver.find_element(by="id", value="id_username").send_keys("automated")
+  driver.find_element(by="id", value="username").send_keys("admin")
   time.sleep(2)
-  driver.find_element(by="id", value="id_password").send_keys("automatedautomated" + Keys.RETURN)
+  driver.find_element(by="id", value="password").send_keys("admin" + Keys.RETURN)
   time.sleep(2)
   
   # Click on Home link and wait 2 seconds
