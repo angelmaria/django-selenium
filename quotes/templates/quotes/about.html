@@ -1,0 +1,18 @@
+<!-- templates/quotes/about.html -->
+{% extends "quotes/base.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>About</h1>
+    <ul class="list-group">
+        {% for author in authors %}
+            <li class="list-group-item">
+                <!-- Cambiar href para enlazar con la página de detalles del autor -->
+                <a href="{% url 'author_detail' author.id %}">{{ author.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

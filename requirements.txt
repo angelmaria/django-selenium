@@ -1,0 +1,12 @@
+beautifulsoup4==4.12.3
+Django>=4.0,<5.0
+pandas==2.2.2
+mysqlclient==2.2.4
+pip==24.1.2
+PyMySQL==1.1.1
+setuptools==70.3.0
+pytest==8.3.1
+python-dotenv==1.0.1
+scrapy==2.11.2
+schedule==1.2.2
+seaborn==0.13.2

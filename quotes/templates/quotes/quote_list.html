@@ -1,0 +1,167 @@
+{% extends "quotes/base.html" %}
+
+{% block title %}Quotes{% endblock %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="row" id="quotes">
+        <!-- Contenido Principal -->
+        <div class="col-md-8">
+            <h1>Quotes</h1>
+            
+            {% for quote in page_obj %}
+                <div class="card my-3">
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p>{{ quote.text }}</p>
+                            <footer class="blockquote-footer">
+                                <a href="{% url 'author_detail' quote.author.id %}"><span class="autor">{{ quote.author.name }}</span></a>
+                            </footer>
+                        </blockquote>
+                        <div class="mt-2">
+                            <strong>Tags:</strong>
+                            {% for quote_tag in quote.quote_tags.all %}
+                                <a href="{% url 'tag_detail' quote_tag.tag.id %}"><span class="badge badge-info">{{ quote_tag.tag.name }}</span></a>
+                            {% empty %}
+                                <span class="text-muted">No tags available</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Paginación -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if selected_author %}&author={{ selected_author }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_author %}&author={{ selected_author }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;&laquo;</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo;</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if selected_author %}&author={{ selected_author }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_author %}&author={{ selected_author }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if selected_author %}&author={{ selected_author }}{% endif %}{% if selected_tag %}&tag={{ selected_tag }}{% endif %}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">&raquo;&raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="col-md-4">
+            <div class="bg-light p-3 sticky-top">
+                <h2 class="mb-3 fw-bold" id="selectors">Selectores</h2>
+                <!-- Formulario para seleccionar el autor -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form method="get" action="{% url 'quote_list' %}">
+                            <div class="form-group">
+                                <label for="author">Select Author:</label>
+                                <select id="author" name="author" class="form-control" onchange="this.form.submit()">
+                                    <option value="">All Authors</option>
+                                    {% for author in authors %}
+                                        <option value="{{ author.id }}" {% if selected_author == author.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ author.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- Formulario para seleccionar la etiqueta -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <form method="get" action="{% url 'quote_list' %}">
+                            <div class="form-group">
+                                <label for="tag">Select Tag:</label>
+                                <select id="tag" name="tag" class="form-control" onchange="this.form.submit()">
+                                    <option value="">All Tags</option>
+                                    {% for tag in tags %}
+                                        <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ tag.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <hr class="mt-4">
+                <h2 class="text-secondary mb-3" id="top-10">Top 10</h2>
+                <!-- Botón para mostrar la distribución de citas por etiqueta -->
+                <div class="card mb-3">
+                    <div class="card-body text-center top-rojo">
+                        <button id="show-tag-distribution" class="btn btn-primary"><span class="boton-sidebar">Top 10 Tags</span></button>
+                    </div>
+                </div>
+                <!-- Botón para mostrar la distribución de citas por autor -->
+                <div class="card mb-3">
+                    <div class="card-body text-center top-azul">
+                        <button id="show-author-distribution" class="btn btn-primary"><span class="boton-sidebar">Top 10 Authors</span></button>
+                    </div>
+                </div>
+                <!-- Botón para mostrar la distribución de citas por década -->
+                <div class="card mb-3">
+                    <div class="card-body text-center top-verde">
+                        <button id="show-author-decade-distribution" class="btn btn-primary"><span class="boton-sidebar">Top Decades</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("show-tag-distribution").addEventListener("click", function() {
+        window.open("{% url 'generate_tag_distribution_chart' %}", "_blank", "width=800,height=600");
+    });
+    document.getElementById("show-author-distribution").addEventListener("click", function() {
+        window.open("{% url 'generate_author_distribution_chart' %}", "_blank", "width=800,height=600");
+    });
+    document.getElementById("show-author-decade-distribution").addEventListener("click", function() {
+        window.open("{% url 'generate_author_decade_distribution_chart' %}", "_blank", "width=800,height=600");
+    });
+</script>
+{% endblock %}
