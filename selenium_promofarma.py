@@ -19,16 +19,12 @@ def get_driver():
         "profile.password_manager_enabled": False
     }
     options.add_experimental_option("prefs", prefs)
-    
-    # Configurar el perfil de usuario de Chrome
-    # user_data_dir = "C:/Users/Person 1/AppData/Local/Google/Chrome/User Data"  # Ruta a la carpeta User Data de Chrome
-    # options.add_argument(f"user-data-dir={user_data_dir}")  # Usar el perfil de usuario
 
     # Inicializar el driver de Chrome con las opciones configuradas
     driver = webdriver.Chrome(options=options)
     driver.set_window_size(1200, 900)  # Configurar el tamaño de la ventana (mitad del tamaño típico de la pantalla)
     # Posicionar la ventana en la esquina superior derecha de la pantalla
-    driver.set_window_position(330, 0)  # Ajustar la coordenada x según la resolución de la pantalla
+    # driver.set_window_position(730, 0)  # Ajustar la coordenada x según la resolución de la pantalla
 
     # Navegar a la página principal
     driver.get("https://www.promofarma.com/")
@@ -36,11 +32,11 @@ def get_driver():
 
 def main():
     driver = get_driver()
-    time.sleep(2)  # Esperar 2 segundos para que la página cargue completamente
+    time.sleep(4)  # Esperar 2 segundos para que la página cargue completamente
 
     # Aceptar todas las cookies
     driver.find_element(by="id", value="onetrust-accept-btn-handler").click()
-    time.sleep(1)  # Esperar 2 segundos para que las cookies sean aceptadas
+    time.sleep(2)  # Esperar 2 segundos para que las cookies sean aceptadas
     
     # Hacer clic en el botón "mi cuenta"
     driver.find_element(by='xpath', value="/html/body/main/div[1]/div/div[2]/div[2]/div[1]/div[1]/span").click()
@@ -54,12 +50,12 @@ def main():
     driver.find_element(by="id", value="username").send_keys("angelmaria76@gmail.com")
     time.sleep(1)
     driver.find_element(by='id', value="login_submit").click()
-    time.sleep(1)
+    time.sleep(2)
     driver.find_element(by="id", value="login_password").send_keys("angelottipavarotti" + Keys.RETURN)
-    time.sleep(1)  # Esperar 2 segundos para que el login se procese
+    time.sleep(2)  # Esperar 2 segundos para que el login se procese
     # Estoy dentro de promofarma
     driver.find_element(by='xpath', value="/html/body/main/div[1]/div/div[2]/div[3]/div/input").send_keys("somatoline reductor 7 noches gel fresco 400ml" + Keys.RETURN)
-    time.sleep(5)
+    time.sleep(4)
 
     price_element = driver.find_element(by='xpath', value="/html/body/div[1]/div[2]/section/div[3]/div[2]/section/div/div[1]/article/div[3]/div[2]/div/div[2]/span")
     product_price = price_element.text
